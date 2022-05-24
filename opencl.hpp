@@ -1,9 +1,8 @@
-#include <iostream>
-#include <fstream>
-#include <memory>
-#include <vector>
-#include <stdexcept>
-#include "opencl.hpp"
+#pragma once
+
+#define CL_HPP_TARGET_OPENCL_VERSION 210
+#include <CL/cl2.hpp>
+
 
 struct AppException : public std::runtime_error {
     AppException(const std::string& what) :
@@ -16,7 +15,6 @@ struct OpenClException : public std::runtime_error {
         std::runtime_error(what)
     {}
 };
-
 
 void check(cl_int response, const std::string& message = "")  {
     if (response != CL_SUCCESS) {
@@ -80,69 +78,5 @@ cl::Kernel createClKernelFromProgram(const cl::Program& program, const std::stri
     cl::Kernel kernel(program, function_name.c_str(), &response);
     check(response, "Could not create kernel from program");
     return kernel;
-}
-
-std::vector<int> randomIntVector(std::size_t n) {
-    std::vector<int> vec(n, 0);
-
-    for (std::size_t i = 0; i < n; i++) {
-        vec[i] = random() % 10;
-    }
-
-    return vec;
-}
-
-
-int app(int argc, char *argv[]) {
-    unsigned platform_id = 1;
-    unsigned device_id = 0;
-    std::string kernel_path = "kernel.cl";
-
-    cl_int response;
-    auto context = createOpenClContext(platform_id);
-    auto devices = getClDevices(context);
-    auto source = loadClKernelSource(kernel_path);
-    auto program = buildClProgram(context, source, devices);
-    auto kernel = createClKernelFromProgram(program, "multiply");
-
-    std::size_t size = 10;
-    std::vector<int> a = randomIntVector(size);
-    std::vector<int> b = randomIntVector(size);
-    std::vector<int> c(size, 0);
-
-    cl::Buffer inA(context, CL_MEM_READ_ONLY, sizeof(int) * size);
-    cl::Buffer inB(context, CL_MEM_READ_ONLY, sizeof(int) * size);
-    cl::Buffer outC(context, CL_MEM_WRITE_ONLY, sizeof(int) * size);
-
-    cl::CommandQueue queue(context, devices[device_id], 0, &response);
-    check(response, "Could not initialze command queue");
-    queue.enqueueWriteBuffer(inA, CL_TRUE, 0, sizeof(int) * size, a.data());
-    queue.enqueueWriteBuffer(inB, CL_TRUE, 0, sizeof(int) * size, b.data());
-    
-    kernel.setArg(0, inA);
-    kernel.setArg(1, inB);
-    kernel.setArg(2, outC);
-
-    cl::Event event;
-    check(queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(size), cl::NDRange(1), NULL, &event), "Could not enqueue ND range kernel");
-    event.wait();
-    check(queue.enqueueReadBuffer(outC, CL_TRUE, 0, sizeof(int) * size, c.data()), "Could not enqueue read buffer");
-    
-    for (int i = 0; i < size; i++) {
-        std::cout << a[i] << " * " << b[i] << " = " << c[i] << "\n";
-    }
-
-    return 0;
-}
-
-int main(int argc, char *argv[]) {
-    try {
-        return app(argc, argv);
-    } catch (const AppException& e) {
-        std::cerr << "[App Error] " << e.what() << "\n";
-    } catch(const OpenClException& e) {
-        std::cerr << "[OpenCL Error] " << e.what() << "\n";
-        return 1;
-    }
 }
 
