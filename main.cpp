@@ -45,10 +45,6 @@ struct Instance {
 	}
 };
 
-struct Solver {
-	virtual unsigned solve() = 0;
-};
-
 unsigned calculate_cmax(const Instance& instance, const std::vector<unsigned>& tasks_assign) {
 	std::vector<unsigned> processors(instance.processors_number, 0);
 	for (unsigned i = 0; i < instance.tasks.size(); i++) {
@@ -62,7 +58,6 @@ double logarithm(double value, double base) {
 	return std::log(value) / std::log(base);
 }
 
-
 template <typename T>
 void print_vec(const std::vector<T>& vec) {
 	for (const auto& e : vec) {
@@ -70,6 +65,10 @@ void print_vec(const std::vector<T>& vec) {
 	}
 	std::cout << "\n";
 }
+
+struct Solver {
+	virtual unsigned solve() = 0;
+};
 
 struct BruteForceSolverSync : public Solver {
 	BruteForceSolverSync(const Instance& instance) :
@@ -83,18 +82,19 @@ struct BruteForceSolverSync : public Solver {
 
 		while (true) {
 			best = std::min(best, calculate_cmax(instance, tasks_assign));
-			while (tasks_assign[pointer] == instance.processors_number - 1 && pointer < tasks_assign.size()) {
+			while (tasks_assign[pointer] == instance.processors_number - 1) {
 				tasks_assign[pointer++] = 0;
-			}
 
-			if (pointer == tasks_assign.size()) {
-				break;
+				if (pointer == tasks_assign.size()) {
+					goto solve_end;
+				}
 			}
 
 			tasks_assign[pointer]++;
 			pointer = 0;
 		}
-		
+
+		solve_end:
 		return best;
 	}
 
@@ -129,11 +129,11 @@ struct BruteForceSolverParalell : public Solver {
 				local_best = std::min(local_best, calculate_cmax(instance, tasks_assign));
 
 				while (tasks_assign[pointer] == processors - 1) {
+					tasks_assign[pointer++] = 0;
+
 					if (pointer == unlocked_tasks) {
 						goto local_best_calculating_end;
 					}
-
-					tasks_assign[pointer++] = 0;
 				}
 
 				tasks_assign[pointer]++;
