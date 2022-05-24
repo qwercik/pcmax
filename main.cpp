@@ -111,17 +111,15 @@ struct BruteForceSolverParalell : public Solver {
 	unsigned solve() override {
 		unsigned best = std::numeric_limits<unsigned>::max();
 
-		auto locked_tasks = std::ceil(logarithm(threads_num, instance.processors_number));
+		auto processors = instance.processors_number;
+		auto locked_tasks = std::ceil(logarithm(threads_num, processors));
 		auto total_tasks = instance.tasks.size();
 		auto unlocked_tasks = total_tasks - locked_tasks;
-		auto processors = instance.processors_number;
 		int jobs_number = std::pow(processors, locked_tasks);
 
-		#pragma omp parallel for // num_threads(threads_num)
+		#pragma omp parallel for num_threads(threads_num)
 		for (int job_id = 0; job_id < jobs_number; job_id++)
 		{
-			int threads_num = omp_get_num_threads();
-
 			unsigned local_best = std::numeric_limits<unsigned>::max();
 			std::vector<unsigned> tasks_assign(total_tasks, 0);
 			init_tasks_assign(tasks_assign, job_id);
