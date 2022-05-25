@@ -51,14 +51,12 @@ struct BruteForceSolverParalell : public Solver {
 
 	void init_tasks_assign(std::vector<unsigned>& tasks_assign, int job_id) {
 		int pointer = tasks_assign.size() - 1;
-		for (int i = 0; i < job_id; i++) {
-			while (tasks_assign[pointer] == instance.processors_number - 1 && pointer >= 0) {
-				tasks_assign[pointer--] = 0;
-			}
 
-			tasks_assign[pointer]++;
-			pointer = tasks_assign.size() - 1;
-		}
+        int p = instance.processors_number;
+        while (job_id >= p) {
+            tasks_assign[pointer--] = job_id % p;
+            job_id /= p;
+        }
 	}
 
 private:
