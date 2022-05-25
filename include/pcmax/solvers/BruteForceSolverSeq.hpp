@@ -1,8 +1,10 @@
 #pragma once
-#include "../common.hpp"
 
-struct BruteForceSolverSync : public Solver {
-	BruteForceSolverSync(const Instance& instance) :
+#include <pcmax/Instance.hpp>
+#include <pcmax/solvers/Solver.hpp>
+
+struct BruteForceSolverSeq : public Solver {
+	BruteForceSolverSeq(const Instance& instance) :
 		instance(instance)
 	{}
 
@@ -12,7 +14,7 @@ struct BruteForceSolverSync : public Solver {
 		unsigned best = std::numeric_limits<unsigned>::max();
 
 		while (true) {
-			best = std::min(best, calculate_cmax(instance, tasks_assign));
+			best = std::min(best, instance.calculate_cmax(tasks_assign));
 			while (tasks_assign[pointer] == instance.processors_number - 1) {
 				tasks_assign[pointer++] = 0;
 

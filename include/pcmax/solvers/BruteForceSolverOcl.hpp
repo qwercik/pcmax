@@ -5,8 +5,9 @@
 #include <memory>
 #include <vector>
 #include <stdexcept>
-#include "../common.hpp"
-#include "../opencl.hpp"
+#include <pcmax/Instance.hpp>
+#include <pcmax/solvers/Solver.hpp>
+#include <pcmax/opencl.hpp>
 
 struct BruteForceSolverOcl : public Solver {
     BruteForceSolverOcl(const Instance& instance) :

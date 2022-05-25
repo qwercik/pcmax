@@ -8,11 +8,14 @@
 #include <memory>
 #include <omp.h>
 #include <chrono>
+#include <functional>
 
-#include "common.hpp"
-#include "modes/syn.hpp"
-#include "modes/par.hpp"
-#include "modes/ocl.hpp"
+#include <pcmax/utils.hpp>
+#include <pcmax/Instance.hpp>
+#include <pcmax/solvers/Solver.hpp>
+#include <pcmax/solvers/BruteForceSolverSeq.hpp>
+#include <pcmax/solvers/BruteForceSolverParalell.hpp>
+#include <pcmax/solvers/BruteForceSolverOcl.hpp>
 
 int main(int argc, char *argv[]) {
     const int DEFAULT_THREADS = 4;
@@ -20,7 +23,7 @@ int main(int argc, char *argv[]) {
 	if (argc != 3 && argc != 4) {
 		std::cerr << "Incorrect usage\n";
 		std::cerr << "Use: " << argv[0] << " <instance> <mode> [threads_num = " << DEFAULT_THREADS << "]\n";
-		std::cerr << "\t available modes: syn, par, ocl\n";
+		std::cerr << "\t available modes: seq, par, ocl\n";
 		std::cerr << "\t threads_num is irrelevant if mode is not par\n";
 		return 1;
 	}
@@ -36,8 +39,8 @@ int main(int argc, char *argv[]) {
 	}
 
 	std::unique_ptr<Solver> solver;
-	if (mode == "syn") {
-		solver = std::make_unique<BruteForceSolverSync>(instance);
+	if (mode == "seq") {
+		solver = std::make_unique<BruteForceSolverSeq>(instance);
 	} else if (mode == "par") {
 		solver = std::make_unique<BruteForceSolverParalell>(instance, threads_num);
 	} else if (mode == "ocl") {
@@ -47,14 +50,12 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	auto start = std::chrono::high_resolution_clock::now();
-	auto solution = solver->solve();
-	auto end = std::chrono::high_resolution_clock::now();
+    unsigned solution;
+    double total_time = measureTime([&]() {
+        solution = solver->solve();
+    });
 
-	std::chrono::duration<double> diff = end - start;
-	double total_time = std::chrono::duration_cast<std::chrono::nanoseconds>(diff).count() / std::pow(10, 9);
-
-	std::cerr << "[Result] " << solution << "\n";
+    std::cerr << "[Result] " << solution << "\n";
 	std::cout << total_time << "\n";
 }
 

@@ -1,5 +1,10 @@
 #pragma once
 
+#include <vector>
+#include <fstream>
+#include <iostream>
+#include <algorithm>
+
 #define RET_IF_FALSE(expression) \
 	if (!(expression)) { \
 		return false; \
@@ -27,37 +32,21 @@ struct Instance {
 		return true;
 	}
 
-	void print() {
+	void print() const {
 		std::cout << processors_number << "\n";
 		std::cout << tasks.size() << "\n";
 		for (const auto& e : tasks) {
 			std::cout << e << "\n";
 		}
 	}
-};
 
-unsigned calculate_cmax(const Instance& instance, const std::vector<unsigned>& tasks_assign) {
-	std::vector<unsigned> processors(instance.processors_number, 0);
-	for (unsigned i = 0; i < instance.tasks.size(); i++) {
-		processors[tasks_assign[i]] += instance.tasks[i];
-	}
+    unsigned calculate_cmax(const std::vector<unsigned>& tasks_assign) const {
+        std::vector<unsigned> processors(processors_number, 0);
+        for (unsigned i = 0; i < tasks.size(); i++) {
+            processors[tasks_assign[i]] += tasks[i];
+        }
 
-	return *std::max_element(processors.begin(), processors.end());
-}
-
-double logarithm(double value, double base) {
-	return std::log(value) / std::log(base);
-}
-
-template <typename T>
-void print_vec(const std::vector<T>& vec) {
-	for (const auto& e : vec) {
-		std::cout << e << " ";
-	}
-	std::cout << "\n";
-}
-
-struct Solver {
-	virtual unsigned solve() = 0;
+        return *std::max_element(processors.begin(), processors.end());
+    }
 };
 

@@ -3,7 +3,6 @@
 #define CL_HPP_TARGET_OPENCL_VERSION 210
 #include <CL/cl2.hpp>
 
-
 struct AppException : public std::runtime_error {
     AppException(const std::string& what) :
         std::runtime_error(what)

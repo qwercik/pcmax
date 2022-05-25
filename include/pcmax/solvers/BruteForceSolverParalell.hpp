@@ -1,5 +1,7 @@
 #pragma once
-#include "../common.hpp"
+
+#include <pcmax/Instance.hpp>
+#include <pcmax/solvers/Solver.hpp>
 
 struct BruteForceSolverParalell : public Solver {
 	BruteForceSolverParalell(const Instance& instance, unsigned threads_num = 4) :
@@ -25,7 +27,7 @@ struct BruteForceSolverParalell : public Solver {
 
 			unsigned pointer = 0;
 			while (true) {
-				local_best = std::min(local_best, calculate_cmax(instance, tasks_assign));
+				local_best = std::min(local_best, instance.calculate_cmax(tasks_assign));
 
 				while (tasks_assign[pointer] == processors - 1) {
 					tasks_assign[pointer++] = 0;
