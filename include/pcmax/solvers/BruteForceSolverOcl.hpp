@@ -35,7 +35,7 @@ struct BruteForceSolverOcl : public Solver {
 
         unsigned processors = instance.processors_number;
         unsigned total_tasks = instance.tasks.size();
-        unsigned unlocked_tasks = 12; // 8;
+        unsigned unlocked_tasks = 6; // 8;
         unsigned locked_tasks = total_tasks - unlocked_tasks;
 
         cl_int response;
@@ -67,9 +67,9 @@ struct BruteForceSolverOcl : public Solver {
         event.wait();
         check(queue.enqueueReadBuffer(answers_buffer, CL_TRUE, 0, sizeof(int) * answers.size(), answers.data()), "Could not enqueue read buffer");
 
-        for (const auto& a : answers) {
-            std::cout << a << "\n";
-        }
+        // for (auto i = 0; i < answers.size(); i++) {
+        //    std::cerr << "[" << i << "] " << answers[i] << "\n";
+        // }
 
         return *std::min_element(answers.begin(), answers.end());
     }

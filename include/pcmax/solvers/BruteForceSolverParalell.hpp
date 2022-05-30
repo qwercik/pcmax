@@ -57,6 +57,7 @@ struct BruteForceSolverParalell : public Solver {
             tasks_assign[pointer--] = job_id % p;
             job_id /= p;
         }
+        tasks_assign[pointer] = job_id;
 	}
 
 private:
