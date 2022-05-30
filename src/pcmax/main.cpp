@@ -15,7 +15,7 @@
 #include <pcmax/solvers/Solver.hpp>
 #include <pcmax/solvers/BruteForceSolverSeq.hpp>
 #include <pcmax/solvers/BruteForceSolverParalell.hpp>
-#include <pcmax/solvers/BruteForceSolverOcl.hpp>
+// #include <pcmax/solvers/BruteForceSolverOcl.hpp>
 
 int main(int argc, char *argv[]) {
     const int DEFAULT_THREADS = 4;
@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
 	} else if (mode == "par") {
 		solver = std::make_unique<BruteForceSolverParalell>(instance, threads_num);
 	} else if (mode == "ocl") {
-        solver = std::make_unique<BruteForceSolverOcl>(instance);
+   //     solver = std::make_unique<BruteForceSolverOcl>(instance);
     } else {
 		std::cerr << "Unsupported mode\n";
 		return 1;

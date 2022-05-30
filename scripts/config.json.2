@@ -1,0 +1,19 @@
+{
+	"tests": [
+		{
+			"name": "Algorytm brute-force rozwiązujący problem P||Cmax",
+			"size_range": {
+				"start": 500,
+				"step": 100,
+				"count": 10
+			},
+			"repeats": 3,
+			"generate_function": "external",
+			"applications": [
+				{ "name": "Sekwencyjny", "command": "xargs -I{} ./build/pcmax {} seq" },
+				{ "name": "Zrównoleglony", "command": "xargs -I{} ./build/pcmax {} par" }
+			]
+		}
+	]
+}
+

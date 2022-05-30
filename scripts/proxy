@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+
+import sys
+import subprocess
+
+arg = input()
+command = sys.argv[1] + ' ' + arg
+
+try:
+	print(subprocess.check_output(command, shell=True))
+except:
+	pass
+
+
