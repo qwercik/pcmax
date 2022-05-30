@@ -3,20 +3,20 @@
 		{
 			"name": "Algorytm brute-force rozwiązujący problem P||Cmax",
 			"size_range": {
-				"start": 1,
+				"start": 10,
 				"step": 1,
-				"count": 1
+				"count": 6
 			},
-			"repeats": 5,
-			"generate_function": "external",
+			"repeats": 10,
+			"generate_function": "exec",
 			"applications": [
-				{ "name": "Zrównoleglony - 1 wątek", "command": "./build/pcmax instances/my/3.txt par 1" },
-				{ "name": "Zrównoleglony - 2 wątki", "command": "./build/pcmax instances/my/3.txt par 2" },
-				{ "name": "Zrównoleglony - 3 wątki", "command": "./build/pcmax instances/my/3.txt par 3" },
-				{ "name": "Zrównoleglony - 4 wątki", "command": "./build/pcmax instances/my/3.txt par 4" },
-				{ "name": "Zrównoleglony - 6 wątków", "command": "./build/pcmax instances/my/3.txt par 6" },
-				{ "name": "Zrównoleglony - 8 wątków", "command": "./build/pcmax instances/my/3.txt par 8" },
-				{ "name": "Zrównoleglony - 10 wątków", "command": "./build/pcmax instances/my/3.txt par 10" }
+				{ "name": "Sekwencyjny", "command": "./build/pcmax seq" },
+				{ "name": "Zrównoleglony - 1 wątek", "command": "./build/pcmax par 1" },
+				{ "name": "Zrównoleglony - 2 wątki", "command": "./build/pcmax par 2" },
+				{ "name": "Zrównoleglony - 4 wątki", "command": "./build/pcmax par 4" },
+				{ "name": "Zrównoleglony - 6 wątków", "command": "./build/pcmax par 6" },
+				{ "name": "Zrównoleglony - 8 wątków", "command": "./build/pcmax par 8" },
+				{ "name": "Zrównoleglony - 10 wątków", "command": "./build/pcmax par 10" }
 			]
 		}
 	]

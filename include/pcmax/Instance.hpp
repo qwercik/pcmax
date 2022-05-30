@@ -14,18 +14,22 @@ struct Instance {
 	unsigned processors_number = 0;
 	std::vector<unsigned> tasks;
 
-	bool loadFromFile(const std::string& path) {
-		std::ifstream file(path);
+    bool loadFromFile(const std::string& path) {
+        std::ifstream file(path);
+        RET_IF_FALSE(file.is_open());
+        return loadFromStream(file);
+    }
+
+	bool loadFromStream(std::istream& stream) {
 		unsigned tasks_number;
 
-		RET_IF_FALSE(file.is_open());
-		RET_IF_FALSE(file >> processors_number);
-		RET_IF_FALSE(file >> tasks_number);
+		RET_IF_FALSE(stream >> processors_number);
+		RET_IF_FALSE(stream >> tasks_number);
 
 		tasks.reserve(tasks_number);
 		for (unsigned i = 0; i < tasks_number; i++) {
 			unsigned task_length;
-			RET_IF_FALSE(file >> task_length);
+			RET_IF_FALSE(stream >> task_length);
 			tasks.push_back(task_length);
 		}
 

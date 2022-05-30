@@ -4,7 +4,7 @@ import sys
 import json
 import matplotlib.pyplot as pyplot
 
-COLORS = 'bgrcmyk'
+COLORS = 'bgrcmykw'
 
 def printHelp():
 	print('Usage:', sys.argv[0], '<results>')

@@ -1,0 +1,21 @@
+#!/usr/bin/env python3
+
+import sys
+import random
+
+TASK_LEN_RANGE = (10, 19)
+
+def main():
+    # Usage: <app> <proc_num> <tasks_num>
+    processors_number, tasks_number = map(int, sys.argv[1:])
+    random.seed(processors_number * 100 + tasks_number)
+
+    tasks = (random.randint(*TASK_LEN_RANGE) for _ in range(tasks_number))
+
+    print(processors_number)
+    print(tasks_number)
+    print('\n'.join(map(str, tasks)))
+
+if __name__ == '__main__':
+    main()
+

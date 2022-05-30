@@ -20,21 +20,20 @@
 int main(int argc, char *argv[]) {
     const int DEFAULT_THREADS = 4;
 
-	if (argc != 3 && argc != 4) {
+	if (argc != 2 && argc != 3) {
 		std::cerr << "Incorrect usage\n";
-		std::cerr << "Use: " << argv[0] << " <instance> <mode> [threads_num = " << DEFAULT_THREADS << "]\n";
+		std::cerr << "Use: " << argv[0] << " <mode> [threads_num = " << DEFAULT_THREADS << "]\n";
 		std::cerr << "\t available modes: seq, par, ocl\n";
 		std::cerr << "\t threads_num is irrelevant if mode is not par\n";
 		return 1;
 	}
 
-	std::string instance_path = argv[1];
-	std::string mode = argv[2];
-	int threads_num = argc < 4 ? DEFAULT_THREADS : std::stoi(argv[3]);
+	std::string mode = argv[1];
+	int threads_num = argc < 3 ? DEFAULT_THREADS : std::stoi(argv[2]);
 
 	Instance instance;
-	if (!instance.loadFromFile(instance_path)) {
-		std::cerr << "File doesn\'t exist\n";
+	if (!instance.loadFromStream(std::cin)) {
+		std::cerr << "Incomplete instance information at stdin\n";
 		return 1;
 	}
 
