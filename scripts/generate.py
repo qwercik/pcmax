@@ -26,7 +26,7 @@ def external(size):
 	return [size]
 
 def exec(size):
-	output = subprocess.check_output(f'./scripts/instance_generator 4 {size}', shell=True).decode()
+	output = subprocess.check_output(f'./scripts/instance_generator {size} 10', shell=True).decode()
 	return output.strip().split('\n')
 
 functions = {

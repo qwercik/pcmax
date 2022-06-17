@@ -23,7 +23,8 @@ unsigned get_cmax(__local unsigned *processors_total, unsigned processors_number
     }
 
     for (size_t i = 0; i < tasks_number; i++) {
-        processors_total[i] += tasks_durations[tasks_mapping[i]];
+        // processors_total[i] += tasks_durations[tasks_mapping[i]];
+        processors_total[tasks_mapping[i]] += tasks_durations[i];
     }
 
     unsigned biggest = 0;
@@ -41,17 +42,17 @@ __kernel void find_best(
     __constant unsigned *tasks_durations,
     __global unsigned *answers,
     __local unsigned *tasks_mapping,
+    unsigned tasks_number,
     unsigned unlocked_tasks,
     unsigned processors_number,
     __local unsigned *processors_total
 )
 {
 	size_t id = get_global_id(0);
-    size_t tasks_number = get_global_size(0);
     init_tasks_assign(tasks_mapping, tasks_number - 1, processors_number, id);
 
     unsigned best = 999999999;
-    /*size_t ptr = 0;
+    size_t ptr = 0;
     while (true) {
         unsigned cmax = get_cmax(processors_total, processors_number, tasks_durations, tasks_number, tasks_mapping);
         if (cmax < best) {
@@ -69,7 +70,7 @@ __kernel void find_best(
 
         tasks_mapping[ptr]++;
         ptr = 0;
-    }*/
+    }
 
     end:
     answers[id] = best;

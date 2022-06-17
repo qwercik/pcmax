@@ -17,6 +17,8 @@
 #include <pcmax/solvers/BruteForceSolverParalell.hpp>
 #include <pcmax/solvers/BruteForceSolverOcl.hpp>
 
+#pragma OPENCL EXTENSION cl_intel_printf : enable
+
 int main(int argc, char *argv[]) {
     const int DEFAULT_THREADS = 4;
 

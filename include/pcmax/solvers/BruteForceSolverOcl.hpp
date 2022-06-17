@@ -35,7 +35,7 @@ struct BruteForceSolverOcl : public Solver {
 
         unsigned processors = instance.processors_number;
         unsigned total_tasks = instance.tasks.size();
-        unsigned unlocked_tasks = 6; // 8;
+        unsigned unlocked_tasks = 4; // 8;
         unsigned locked_tasks = total_tasks - unlocked_tasks;
 
         cl_int response;
@@ -54,13 +54,14 @@ struct BruteForceSolverOcl : public Solver {
         std::vector<int> answers(std::pow(processors, locked_tasks), 0);
         cl::Buffer answers_buffer(context, CL_MEM_WRITE_ONLY, sizeof(int) * answers.size());
         queue.enqueueWriteBuffer(answers_buffer, CL_TRUE, 0, sizeof(int) * answers.size(), answers.data());
-      
+
         kernel.setArg(0, durations_buffer);
         kernel.setArg(1, answers_buffer);
-        kernel.setArg(2, unlocked_tasks, NULL);
-        kernel.setArg(3, unlocked_tasks);
-        kernel.setArg(4, processors);
-        kernel.setArg(5, processors, NULL);
+        kernel.setArg(2, total_tasks * sizeof(unsigned), NULL);
+        kernel.setArg(3, sizeof(unsigned), &total_tasks);
+        kernel.setArg(4, sizeof(unsigned), &unlocked_tasks);
+        kernel.setArg(5, sizeof(unsigned), &processors);
+        kernel.setArg(6, processors * sizeof(unsigned), NULL);
 
         cl::Event event;
         check(queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(answers.size()), cl::NDRange(1), NULL, &event), "Could not enqueue ND range kernel");
@@ -69,7 +70,7 @@ struct BruteForceSolverOcl : public Solver {
 
         // for (auto i = 0; i < answers.size(); i++) {
         //    std::cerr << "[" << i << "] " << answers[i] << "\n";
-        // }
+        //}
 
         return *std::min_element(answers.begin(), answers.end());
     }
