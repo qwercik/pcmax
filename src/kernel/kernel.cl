@@ -1,4 +1,4 @@
-void init_tasks_assign(__local unsigned *tasks_mapping, size_t ptr, unsigned base, size_t id)
+void init_tasks_assign(unsigned *tasks_mapping, size_t ptr, unsigned base, size_t id)
 {
     while (id >= base)
     {
@@ -16,14 +16,13 @@ void init_tasks_assign(__local unsigned *tasks_mapping, size_t ptr, unsigned bas
     tasks_mapping[0] = 0;
 }
 
-unsigned get_cmax(__local unsigned *processors_total, unsigned processors_number, __constant unsigned *tasks_durations, size_t tasks_number, __local unsigned *tasks_mapping)
+unsigned get_cmax(unsigned *processors_total, unsigned processors_number, __constant unsigned *tasks_durations, size_t tasks_number, unsigned *tasks_mapping)
 {
     for (unsigned i = 0; i < processors_number; i++) {
         processors_total[i] = 0;
     }
 
     for (size_t i = 0; i < tasks_number; i++) {
-        // processors_total[i] += tasks_durations[tasks_mapping[i]];
         processors_total[tasks_mapping[i]] += tasks_durations[i];
     }
 
@@ -41,14 +40,15 @@ unsigned get_cmax(__local unsigned *processors_total, unsigned processors_number
 __kernel void find_best(
     __constant unsigned *tasks_durations,
     __global unsigned *answers,
-    __local unsigned *tasks_mapping,
     unsigned tasks_number,
     unsigned unlocked_tasks,
-    unsigned processors_number,
-    __local unsigned *processors_total
+    unsigned processors_number
 )
 {
 	size_t id = get_global_id(0);
+    unsigned tasks_mapping[20];
+    unsigned processors_total[8];
+
     init_tasks_assign(tasks_mapping, tasks_number - 1, processors_number, id);
 
     unsigned best = 999999999;

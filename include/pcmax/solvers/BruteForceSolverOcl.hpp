@@ -35,8 +35,10 @@ struct BruteForceSolverOcl : public Solver {
 
         unsigned processors = instance.processors_number;
         unsigned total_tasks = instance.tasks.size();
-        unsigned unlocked_tasks = 4; // 8;
-        unsigned locked_tasks = total_tasks - unlocked_tasks;
+        // unsigned unlocked_tasks = 6; // 8;
+        // unsigned locked_tasks = total_tasks - unlocked_tasks;
+        unsigned locked_tasks = 8;
+        unsigned unlocked_tasks = total_tasks - locked_tasks;
 
         cl_int response;
         auto context = createOpenClContext(platform_id);
@@ -57,22 +59,21 @@ struct BruteForceSolverOcl : public Solver {
 
         kernel.setArg(0, durations_buffer);
         kernel.setArg(1, answers_buffer);
-        kernel.setArg(2, total_tasks * sizeof(unsigned), NULL);
-        kernel.setArg(3, sizeof(unsigned), &total_tasks);
-        kernel.setArg(4, sizeof(unsigned), &unlocked_tasks);
-        kernel.setArg(5, sizeof(unsigned), &processors);
-        kernel.setArg(6, processors * sizeof(unsigned), NULL);
+        kernel.setArg(2, sizeof(unsigned), &total_tasks);
+        kernel.setArg(3, sizeof(unsigned), &unlocked_tasks);
+        kernel.setArg(4, sizeof(unsigned), &processors);
 
         cl::Event event;
         check(queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(answers.size()), cl::NDRange(1), NULL, &event), "Could not enqueue ND range kernel");
         event.wait();
         check(queue.enqueueReadBuffer(answers_buffer, CL_TRUE, 0, sizeof(int) * answers.size(), answers.data()), "Could not enqueue read buffer");
 
-        // for (auto i = 0; i < answers.size(); i++) {
-        //    std::cerr << "[" << i << "] " << answers[i] << "\n";
-        //}
+        for (std::size_t i = 0; i < answers.size(); i++) {
+            std::cout << "[" << i << "] " << answers[i] << "\n";
+        }
 
-        return *std::min_element(answers.begin(), answers.end());
+        // return *std::min_element(answers.begin(), answers.end());
+        return fast_min(answers);
     }
 
     template <typename T>
@@ -86,7 +87,7 @@ struct BruteForceSolverOcl : public Solver {
             #pragma omp for
             for (std::size_t i = 0; i < vec.size(); i++) {
                 auto value = vec[i];
-                if (value < local_min) {
+                if (value < local_min && value > 0) {
                     local_min = value;
                 }
             }
